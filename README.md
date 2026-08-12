@@ -1,15 +1,47 @@
----
-title: Fake Image Backend
-emoji: 📉
-colorFrom: red
-colorTo: green
-sdk: gradio
-sdk_version: 6.23.1
-python_version: '3.12'
-app_file: app.py
-pinned: false
-license: apache-2.0
-short_description: 'AI-generated vs real image detection API using a fine-tuned '
----
+# AI vs Real Image Detector
 
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
+An AI-powered web application that detects whether an uploaded image is **Real** or **AI Generated** using a Vision Transformer (ViT).
+
+## Project Structure
+
+- Frontend: HTML, CSS and JavaScript
+- Backend: Python + Gradio
+- AI Model: Vision Transformer (ViT)
+- Model Hosting: Hugging Face Spaces
+- Frontend Hosting: Vercel
+
+## Frontend
+
+The frontend provides:
+
+- Image upload
+- Image preview
+- AI image analysis
+- Prediction result
+- Confidence score
+- Responsive UI
+
+## Backend
+
+The backend loads the trained Vision Transformer model and performs image classification.
+
+Classes:
+
+- REAL
+- FAKE
+
+## Live Backend
+
+The model is deployed on Hugging Face Spaces.
+
+## Live Frontend
+
+The frontend is deployed on Vercel.
+
+## Repository
+
+This repository contains the frontend and backend source code for the AI vs Real Image Detector.
+
+## License
+
+For educational and research purposes.
