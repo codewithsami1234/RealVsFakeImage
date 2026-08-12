@@ -30,6 +30,9 @@ Classes:
 - REAL
 - FAKE
 
+## Live Project
+https://vercel-frontend-black-mu.vercel.app/?utm_source=chatgpt.com
+
 ## Live Backend
 
 The model is deployed on Hugging Face Spaces.
