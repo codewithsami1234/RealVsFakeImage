@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Vision | AI vs Real Image Detector</title>
+
+    <!-- Gradio JavaScript Client -->
+    <script type="module">
+        import {
+            Client,
+            handle_file
+        } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
+
+        window.GradioClient = Client;
+        window.GradioHandleFile = handle_file;
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #f5f7fa;
+            --card: #ffffff;
+            --text: #111827;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --dark: #111827;
+            --dark-hover: #1f2937;
+            --success: #15803d;
+            --success-bg: #f0fdf4;
+            --danger: #b91c1c;
+            --danger-bg: #fef2f2;
+        }
+
+        body {
+            min-height: 100vh;
+
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at top left,
+                    #ffffff 0%,
+                    #f5f7fa 45%,
+                    #eef1f5 100%
+                );
+
+            color: var(--text);
+        }
+
+        /* ==============================
+           NAVBAR
+        ============================== */
+
+        .navbar {
+            height: 72px;
+
+            border-bottom:
+                1px solid rgba(229, 231, 235, 0.8);
+
+            background:
+                rgba(255, 255, 255, 0.85);
+
+            backdrop-filter: blur(12px);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 0 6%;
+        }
+
+        .brand {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            font-weight: 700;
+
+            font-size: 18px;
+
+            letter-spacing: -0.3px;
+        }
+
+        .brand-icon {
+            width: 36px;
+            height: 36px;
+
+            border-radius: 10px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: var(--dark);
+
+            color: white;
+
+            font-size: 18px;
+        }
+
+        .status {
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            font-size: 13px;
+
+            color: var(--muted);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+
+            border-radius: 50%;
+
+            background: #22c55e;
+
+            box-shadow:
+                0 0 0 4px #dcfce7;
+        }
+
+        /* ==============================
+           MAIN
+        ============================== */
+
+        .main {
+            width: 100%;
+
+            max-width: 900px;
+
+            margin: auto;
+
+            padding: 70px 20px 50px;
+        }
+
+        .hero {
+            text-align: center;
+
+            margin-bottom: 45px;
+        }
+
+        .badge {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            padding: 7px 13px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 999px;
+
+            background: white;
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            color: #4b5563;
+
+            margin-bottom: 18px;
+        }
+
+        .badge span {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #22c55e;
+        }
+
+        h1 {
+            font-size:
+                clamp(36px, 6vw, 58px);
+
+            line-height: 1.05;
+
+            letter-spacing: -2.5px;
+
+            margin-bottom: 18px;
+        }
+
+        .hero p {
+            max-width: 650px;
+
+            margin: auto;
+
+            font-size: 17px;
+
+            line-height: 1.7;
+
+            color: var(--muted);
+        }
+
+        /* ==============================
+           DETECTOR CARD
+        ============================== */
+
+        .detector-card {
+            background: var(--card);
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 24px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 20px 50px
+                rgba(17, 24, 39, 0.08);
+        }
+
+        .upload-area {
+            min-height: 330px;
+
+            border:
+                2px dashed #d1d5db;
+
+            border-radius: 18px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            text-align: center;
+
+            cursor: pointer;
+
+            transition:
+                border-color 0.2s,
+                background 0.2s,
+                transform 0.2s;
+        }
+
+        .upload-area:hover {
+            border-color: #6b7280;
+
+            background: #fafafa;
+
+            transform: translateY(-1px);
+        }
+
+        .upload-content {
+            padding: 30px;
+        }
+
+        .upload-icon {
+            width: 68px;
+            height: 68px;
+
+            margin: 0 auto 20px;
+
+            border-radius: 18px;
+
+            background: #f3f4f6;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 30px;
+        }
+
+        .upload-title {
+            font-size: 20px;
+
+            font-weight: 700;
+
+            margin-bottom: 8px;
+        }
+
+        .upload-description {
+            color: var(--muted);
+
+            font-size: 14px;
+
+            margin-bottom: 16px;
+        }
+
+        .formats {
+            display: inline-block;
+
+            padding: 6px 10px;
+
+            border-radius: 7px;
+
+            background: #f9fafb;
+
+            border:
+                1px solid var(--border);
+
+            font-size: 12px;
+
+            color: #6b7280;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        /* ==============================
+           PREVIEW
+        ============================== */
+
+        .preview-wrapper {
+            display: none;
+
+            margin-top: 24px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 16px;
+
+            overflow: hidden;
+
+            background: #f9fafb;
+        }
+
+        .preview-header {
+            padding: 12px 16px;
+
+            border-bottom:
+                1px solid var(--border);
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            color: #4b5563;
+        }
+
+        #preview {
+            display: block;
+
+            width: 100%;
+
+            max-height: 400px;
+
+            object-fit: contain;
+
+            background: #f3f4f6;
+        }
+
+        /* ==============================
+           BUTTON
+        ============================== */
+
+        .analyze-button {
+            width: 100%;
+
+            margin-top: 22px;
+
+            padding: 16px 20px;
+
+            border: none;
+
+            border-radius: 12px;
+
+            background: var(--dark);
+
+            color: white;
+
+            font-size: 15px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition:
+                background 0.2s,
+                transform 0.2s,
+                box-shadow 0.2s;
+        }
+
+        .analyze-button:hover:not(:disabled) {
+            background: var(--dark-hover);
+
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 8px 20px
+                rgba(17, 24, 39, 0.18);
+        }
+
+        .analyze-button:disabled {
+            background: #d1d5db;
+
+            cursor: not-allowed;
+        }
+
+        /* ==============================
+           LOADING
+        ============================== */
+
+        .loading {
+            display: none;
+
+            text-align: center;
+
+            margin-top: 22px;
+
+            color: var(--muted);
+
+            font-size: 14px;
+        }
+
+        .spinner {
+            width: 22px;
+            height: 22px;
+
+            margin: 0 auto 10px;
+
+            border:
+                3px solid #e5e7eb;
+
+            border-top-color:
+                #111827;
+
+            border-radius: 50%;
+
+            animation:
+                spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ==============================
+           RESULT
+        ============================== */
+
+        .result {
+            display: none;
+
+            margin-top: 28px;
+
+            border-radius: 18px;
+
+            padding: 28px;
+
+            border:
+                1px solid var(--border);
+
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 12px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1.5px;
+
+            font-weight: 700;
+
+            color: var(--muted);
+
+            margin-bottom: 12px;
+        }
+
+        .prediction {
+            font-size: 30px;
+
+            font-weight: 800;
+
+            letter-spacing: -1px;
+
+            margin-bottom: 18px;
+        }
+
+        .confidence-text {
+            font-size: 14px;
+
+            color: var(--muted);
+
+            margin-bottom: 10px;
+        }
+
+        .confidence-bar {
+            width: 100%;
+
+            height: 9px;
+
+            background: #e5e7eb;
+
+            border-radius: 999px;
+
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            width: 0%;
+
+            height: 100%;
+
+            background: #111827;
+
+            border-radius: inherit;
+
+            transition:
+                width 0.7s ease;
+        }
+
+        .result.real {
+            background:
+                var(--success-bg);
+
+            border-color:
+                #bbf7d0;
+        }
+
+        .result.real .prediction {
+            color:
+                var(--success);
+        }
+
+        .result.fake {
+            background:
+                var(--danger-bg);
+
+            border-color:
+                #fecaca;
+        }
+
+        .result.fake .prediction {
+            color:
+                var(--danger);
+        }
+
+        /* ==============================
+           ERROR
+        ============================== */
+
+        .error {
+            display: none;
+
+            margin-top: 20px;
+
+            padding: 14px 16px;
+
+            border-radius: 10px;
+
+            background:
+                var(--danger-bg);
+
+            border:
+                1px solid #fecaca;
+
+            color:
+                var(--danger);
+
+            font-size: 14px;
+
+            text-align: center;
+        }
+
+        /* ==============================
+           INFO
+        ============================== */
+
+        .info-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 14px;
+
+            margin-top: 18px;
+        }
+
+        .info-card {
+            padding: 18px;
+
+            background: white;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 14px;
+
+            text-align: center;
+        }
+
+        .info-number {
+            font-size: 18px;
+
+            font-weight: 800;
+
+            margin-bottom: 4px;
+        }
+
+        .info-label {
+            font-size: 12px;
+
+            color: var(--muted);
+        }
+
+        /* ==============================
+           FOOTER
+        ============================== */
+
+        footer {
+            text-align: center;
+
+            padding: 25px;
+
+            color: #9ca3af;
+
+            font-size: 12px;
+        }
+
+        /* ==============================
+           MOBILE
+        ============================== */
+
+        @media (max-width: 650px) {
+
+            .navbar {
+                padding: 0 20px;
+            }
+
+            .status {
+                display: none;
+            }
+
+            .main {
+                padding-top: 45px;
+            }
+
+            .detector-card {
+                padding: 18px;
+
+                border-radius: 18px;
+            }
+
+            .upload-area {
+                min-height: 270px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                letter-spacing: -1.5px;
+            }
+
+            .hero p {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <!-- ==============================
+         NAVBAR
+    ============================== -->
+
+    <nav class="navbar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                AI
+            </div>
+
+            <span>
+                AI Vision
+            </span>
+
+        </div>
+
+        <div class="status">
+
+            <div class="status-dot"></div>
+
+            Detection system online
+
+        </div>
+
+    </nav>
+
+
+    <!-- ==============================
+         MAIN
+    ============================== -->
+
+    <main class="main">
+
+        <section class="hero">
+
+            <div class="badge">
+
+                <span></span>
+
+                AI-Powered Image Analysis
+
+            </div>
+
+
+            <h1>
+
+                AI vs Real<br>
+
+                Image Detector
+
+            </h1>
+
+
+            <p>
+
+                Upload an image and let our trained
+                Vision Transformer analyze whether
+                the image is AI-generated or captured
+                from the real world.
+
+            </p>
+
+        </section>
+
+
+        <!-- ==============================
+             DETECTOR
+        ============================== -->
+
+        <section class="detector-card">
+
+
+            <label
+                class="upload-area"
+                for="imageInput"
+                id="uploadArea"
+            >
+
+                <div class="upload-content">
+
+                    <div class="upload-icon">
+
+                        🖼️
+
+                    </div>
+
+
+                    <div class="upload-title">
+
+                        Upload an image
+
+                    </div>
+
+
+                    <div class="upload-description">
+
+                        Click here to choose an image
+                        from your device
+
+                    </div>
+
+
+                    <div class="formats">
+
+                        JPG · JPEG · PNG · WEBP
+
+                    </div>
+
+                </div>
+
+            </label>
+
+
+            <input
+                type="file"
+                id="imageInput"
+                accept="image/jpeg,image/jpg,image/png,image/webp"
+            >
+
+
+            <!-- Preview -->
+
+            <div
+                class="preview-wrapper"
+                id="previewWrapper"
+            >
+
+                <div class="preview-header">
+
+                    Selected image
+
+                </div>
+
+
+                <img
+                    id="preview"
+                    alt="Selected image preview"
+                >
+
+            </div>
+
+
+            <!-- Analyze -->
+
+            <button
+                class="analyze-button"
+                id="predictButton"
+                disabled
+            >
+
+                Analyze Image
+
+            </button>
+
+
+            <!-- Loading -->
+
+            <div
+                class="loading"
+                id="loading"
+            >
+
+                <div class="spinner"></div>
+
+                Analyzing image with AI...
+
+            </div>
+
+
+            <!-- Error -->
+
+            <div
+                class="error"
+                id="error"
+            ></div>
+
+
+            <!-- Result -->
+
+            <div
+                class="result"
+                id="result"
+            >
+
+                <div class="result-label">
+
+                    Detection Result
+
+                </div>
+
+
+                <div
+                    class="prediction"
+                    id="prediction"
+                ></div>
+
+
+                <div
+                    class="confidence-text"
+                    id="confidence"
+                ></div>
+
+
+                <div class="confidence-bar">
+
+                    <div
+                        class="confidence-fill"
+                        id="confidenceFill"
+                    ></div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==============================
+             MODEL INFORMATION
+        ============================== -->
+
+        <div class="info-grid">
+
+
+            <div class="info-card">
+
+                <div class="info-number">
+
+                    ViT
+
+                </div>
+
+                <div class="info-label">
+
+                    Vision Transformer
+
+                </div>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <div class="info-number">
+
+                    98%
+
+                </div>
+
+                <div class="info-label">
+
+                    Test Accuracy
+
+                </div>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <div class="info-number">
+
+                    2
+
+                </div>
+
+                <div class="info-label">
+
+                    Image Classes
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <footer>
+
+        AI Vision · AI vs Real Image Detection System
+
+    </footer>
+
+
+    <!-- ==============================
+         JAVASCRIPT
+    ============================== -->
+
+    <script>
+
+        // =====================================================
+        // HUGGING FACE SPACE
+        // =====================================================
+
+        const HF_SPACE =
+            "Sami-ullahKhan/fake-image-backend";
+
+
+        // =====================================================
+        // DOM ELEMENTS
+        // =====================================================
+
+        const imageInput =
+            document.getElementById("imageInput");
+
+        const preview =
+            document.getElementById("preview");
+
+        const previewWrapper =
+            document.getElementById("previewWrapper");
+
+        const predictButton =
+            document.getElementById("predictButton");
+
+        const loading =
+            document.getElementById("loading");
+
+        const result =
+            document.getElementById("result");
+
+        const error =
+            document.getElementById("error");
+
+        const prediction =
+            document.getElementById("prediction");
+
+        const confidence =
+            document.getElementById("confidence");
+
+        const confidenceFill =
+            document.getElementById("confidenceFill");
+
+
+        // =====================================================
+        // GRADIO CLIENT
+        // =====================================================
+
+        let gradioApp = null;
+
+
+        // =====================================================
+        // CONNECT TO HUGGING FACE
+        // =====================================================
+
+        async function connectToBackend() {
+
+            try {
+
+                console.log(
+                    "Connecting to Hugging Face Space..."
+                );
+
+                gradioApp =
+                    await window.GradioClient.connect(
+                        HF_SPACE,
+                        {
+                            status_callback: (status) => {
+
+                                console.log(
+                                    "Space status:",
+                                    status
+                                );
+
+                            }
+                        }
+                    );
+
+
+                console.log(
+                    "Connected to Hugging Face successfully."
+                );
+
+                return true;
+
+            }
+
+            catch (err) {
+
+                console.error(
+                    "Hugging Face connection error:",
+                    err
+                );
+
+                showError(
+                    "Unable to connect to the AI backend."
+                );
+
+                return false;
+            }
+        }
+
+
+        // =====================================================
+        // CONNECT WHEN PAGE LOADS
+        // =====================================================
+
+        window.addEventListener(
+            "load",
+            async function () {
+
+                const connected =
+                    await connectToBackend();
+
+                if (connected) {
+
+                    console.log(
+                        "AI backend is ready."
+                    );
+
+                }
+
+            }
+        );
+
+
+        // =====================================================
+        // IMAGE SELECTION
+        // =====================================================
+
+        imageInput.addEventListener(
+            "change",
+            function () {
+
+                const file =
+                    this.files[0];
+
+
+                if (!file) {
+
+                    predictButton.disabled =
+                        true;
+
+                    previewWrapper.style.display =
+                        "none";
+
+                    result.style.display =
+                        "none";
+
+                    error.style.display =
+                        "none";
+
+                    return;
+                }
+
+
+                // =================================================
+                // VALIDATE FILE
+                // =================================================
+
+                const allowedTypes = [
+
+                    "image/jpeg",
+
+                    "image/png",
+
+                    "image/webp"
+
+                ];
+
+
+                if (
+                    !allowedTypes.includes(
+                        file.type
+                    )
+                ) {
+
+                    showError(
+                        "Please select a JPG, PNG, JPEG or WEBP image."
+                    );
+
+                    predictButton.disabled =
+                        true;
+
+                    return;
+                }
+
+
+                // =================================================
+                // PREVIEW
+                // =================================================
+
+                const imageURL =
+                    URL.createObjectURL(file);
+
+
+                preview.src =
+                    imageURL;
+
+
+                previewWrapper.style.display =
+                    "block";
+
+
+                predictButton.disabled =
+                    false;
+
+
+                result.style.display =
+                    "none";
+
+
+                error.style.display =
+                    "none";
+
+            }
+        );
+
+
+        // =====================================================
+        // ANALYZE IMAGE
+        // =====================================================
+
+        predictButton.addEventListener(
+            "click",
+            async function () {
+
+                const file =
+                    imageInput.files[0];
+
+
+                if (!file) {
+
+                    showError(
+                        "Please select an image first."
+                    );
+
+                    return;
+                }
+
+
+                // =================================================
+                // UI LOADING
+                // =================================================
+
+                predictButton.disabled =
+                    true;
+
+                predictButton.textContent =
+                    "Analyzing...";
+
+                loading.style.display =
+                    "block";
+
+                result.style.display =
+                    "none";
+
+                error.style.display =
+                    "none";
+
+
+                try {
+
+                    // =============================================
+                    // MAKE SURE CLIENT IS CONNECTED
+                    // =============================================
+
+                    if (!gradioApp) {
+
+                        const connected =
+                            await connectToBackend();
+
+                        if (!connected) {
+
+                            throw new Error(
+                                "AI backend is not available."
+                            );
+
+                        }
+
+                    }
+
+
+                    // =============================================
+                    // CONVERT BROWSER FILE FOR GRADIO
+                    // =============================================
+
+                    const imageFile =
+                        window.GradioHandleFile(
+                            file
+                        );
+
+
+                    console.log(
+                        "Sending image to Gradio..."
+                    );
+
+
+                    // =============================================
+                    // CALL GRADIO /predict
+                    // =============================================
+
+                    const response =
+                        await gradioApp.predict(
+                            "/predict",
+                            [
+                                imageFile
+                            ]
+                        );
+
+
+                    console.log(
+                        "Gradio response:",
+                        response
+                    );
+
+
+                    // =============================================
+                    // READ RESPONSE
+                    // =============================================
+
+                    if (
+                        !response ||
+                        !response.data
+                    ) {
+
+                        throw new Error(
+                            "Invalid response received from AI backend."
+                        );
+
+                    }
+
+
+                    const outputs =
+                        response.data;
+
+
+                    console.log(
+                        "Outputs:",
+                        outputs
+                    );
+
+
+                    if (
+                        outputs.length < 2
+                    ) {
+
+                        throw new Error(
+                            "Backend returned an unexpected response."
+                        );
+
+                    }
+
+
+                    // =============================================
+                    // OUTPUT 1 = PREDICTION
+                    // OUTPUT 2 = CONFIDENCE
+                    // =============================================
+
+                    const predictionValue =
+                        outputs[0];
+
+                    const confidenceValue =
+                        Number(
+                            outputs[1]
+                        );
+
+
+                    if (
+                        predictionValue === undefined ||
+                        Number.isNaN(
+                            confidenceValue
+                        )
+                    ) {
+
+                        throw new Error(
+                            "Invalid prediction returned by the model."
+                        );
+
+                    }
+
+
+                    // =============================================
+                    // DISPLAY PREDICTION
+                    // =============================================
+
+                    prediction.textContent =
+                        predictionValue;
+
+
+                    confidence.textContent =
+                        "Confidence: " +
+                        confidenceValue.toFixed(2) +
+                        "%";
+
+
+                    // =============================================
+                    // CONFIDENCE BAR
+                    // =============================================
+
+                    const safeConfidence =
+                        Math.min(
+                            Math.max(
+                                confidenceValue,
+                                0
+                            ),
+                            100
+                        );
+
+
+                    confidenceFill.style.width =
+                        safeConfidence + "%";
+
+
+                    // =============================================
+                    // RESULT COLOR
+                    // =============================================
+
+                    result.classList.remove(
+                        "real",
+                        "fake"
+                    );
+
+
+                    const predictionText =
+                        String(
+                            predictionValue
+                        ).toLowerCase();
+
+
+                    if (
+                        predictionText.includes(
+                            "real"
+                        )
+                    ) {
+
+                        result.classList.add(
+                            "real"
+                        );
+
+                    }
+
+                    else {
+
+                        result.classList.add(
+                            "fake"
+                        );
+
+                    }
+
+
+                    // =============================================
+                    // SHOW RESULT
+                    // =============================================
+
+                    result.style.display =
+                        "block";
+
+
+                    console.log(
+                        "Prediction:",
+                        predictionValue
+                    );
+
+
+                    console.log(
+                        "Confidence:",
+                        confidenceValue
+                    );
+
+                }
+
+
+                catch (err) {
+
+                    console.error(
+                        "Prediction error:",
+                        err
+                    );
+
+
+                    showError(
+                        err.message ||
+                        "Unable to connect to the AI prediction service."
+                    );
+
+                }
+
+
+                finally {
+
+                    loading.style.display =
+                        "none";
+
+
+                    predictButton.disabled =
+                        false;
+
+
+                    predictButton.textContent =
+                        "Analyze Image";
+
+                }
+
+            }
+        );
+
+
+        // =====================================================
+        // ERROR FUNCTION
+        // =====================================================
+
+        function showError(message) {
+
+            error.textContent =
+                message;
+
+            error.style.display =
+                "block";
+
+            result.style.display =
+                "none";
+
+        }
+
+    </script>
+
+</body>
+
+</html>
