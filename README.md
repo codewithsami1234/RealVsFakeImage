@@ -1,50 +1,262 @@
-# AI vs Real Image Detector
+# 🤖 AI vs Real Image Detector
 
-An AI-powered web application that detects whether an uploaded image is **Real** or **AI Generated** using a Vision Transformer (ViT).
+An AI-powered web application that detects whether an uploaded image is **Real** or **AI Generated** using a **Vision Transformer (ViT)** model.
 
-## Project Structure
+The application provides an easy-to-use web interface where users can upload an image and receive a prediction along with a confidence score.
 
-- Frontend: HTML, CSS and JavaScript
-- Backend: Python + Gradio
-- AI Model: Vision Transformer (ViT)
-- Model Hosting: Hugging Face Spaces
-- Frontend Hosting: Vercel
+---
+
+## 🚀 Live Demo
+
+### 🌐 Frontend
+
+**Live Website:**
+https://vercel-frontend-black-mu.vercel.app/
+
+### 🤗 Backend / AI Model
+
+The Vision Transformer model is deployed on **Hugging Face Spaces** and is used as the backend inference service.
+
+---
+
+## ✨ Features
+
+* 🖼️ Upload an image
+* 👁️ Image preview
+* 🤖 AI-powered image classification
+* 🔍 Detect **REAL** vs **AI GENERATED**
+* 📊 Confidence score
+* ⚡ Fast prediction
+* 📱 Responsive web interface
+* ☁️ Cloud-based AI model deployment
+
+---
+
+## 🧠 How It Works
+
+The system uses a **Vision Transformer (ViT)** model to classify uploaded images.
+
+### Workflow
+
+```text
+User
+  │
+  ▼
+Frontend
+HTML + CSS + JavaScript
+  │
+  │ Upload Image
+  ▼
+Backend API
+Python + Gradio
+  │
+  ▼
+Vision Transformer (ViT)
+  │
+  ├── REAL
+  │
+  └── FAKE / AI GENERATED
+  │
+  ▼
+Prediction + Confidence
+  │
+  ▼
+Frontend
+```
+
+---
+
+## 🛠️ Technology Stack
+
+| Component         | Technology                |
+| ----------------- | ------------------------- |
+| Frontend          | HTML, CSS, JavaScript     |
+| Backend           | Python                    |
+| AI Model          | Vision Transformer (ViT)  |
+| AI Framework      | Hugging Face Transformers |
+| Backend Interface | Gradio                    |
+| Model Hosting     | Hugging Face Spaces       |
+| Frontend Hosting  | Vercel                    |
+
+---
+
+# 🖥️ Screenshots
+
+## 🏠 Home Page
+
+<img width="600" height="600" alt="Image" src="https://github.com/user-attachments/assets/8e39d28a-684f-445e-af98-ea5f02e7ddd3" />
+
+---
+
+## 📤 Image Upload
+
+<img width="600" height="600" alt="Image" src="https://github.com/user-attachments/assets/f0fe9717-a41b-4f08-a229-e7666e18392e" />
+
+---
+
+## 🤖 AI Generated Image Prediction
+
+<img width="600" height="600" alt="Image" src="https://github.com/user-attachments/assets/f54a5f9d-9687-4933-b694-2caf5296aac4" />
+
+---
+
+# 🎥 Demo Video
+
+https://github.com/user-attachments/assets/168bde04-7c52-4e84-a433-7f85139d93b9
+
+The demo demonstrates:
+
+1. Opening the web application
+2. Uploading an image
+3. Previewing the image
+4. Sending the image for analysis
+5. Receiving the model prediction
+6. Displaying the confidence score
+
+---
+
+# 🧠 AI Model
+
+The application uses a **Vision Transformer (ViT)** for image classification.
+
+The model analyzes visual features from the uploaded image and predicts one of two classes:
+
+📊 Model Evaluation
+
+The Vision Transformer model was evaluated using multiple classification metrics and visualization techniques.
+
+## Confusion Matrix
+
+The confusion matrix shows how accurately the model classified images into the two classes:
+
+REAL
+FAKE / AI GENERATED
+
+
+
+
+The matrix helps identify:
+
+True Positives
+True Negatives
+False Positives
+False Negatives
+
+This provides a clearer understanding of where the model makes classification errors.
+
+<img width="600" height="600" alt="Image" src="https://github.com/user-attachments/assets/fc103486-d72d-4761-a933-6d56d3a8d3d9" />
+
+---
+
+## ROC Curve & AUC Score
+
+The Receiver Operating Characteristic (ROC) curve evaluates the model's ability to distinguish between real and AI-generated images across different classification thresholds.
+
+
+
+
+AUC
+
+The Area Under the Curve (AUC) summarizes the model's discrimination ability.
+
+An AUC closer to 1.0 generally indicates better separation between the two classes, while an AUC around 0.5 indicates performance close to random classification.
+
+
+<img width="600" height="600" alt="Image" src="https://github.com/user-attachments/assets/f673867c-f4f5-4502-a533-4e79170266cb" />
+
+# 🔌 Backend
+
+The backend is implemented using **Python and Gradio**.
+
+Its main responsibilities are:
+
+* Loading the trained ViT model
+* Receiving uploaded images
+* Preprocessing images
+* Running model inference
+* Returning the predicted class
+* Returning the confidence score
+
+---
+
+# 🌐 Deployment
 
 ## Frontend
 
-The frontend provides:
+The frontend is deployed using **Vercel**.
 
-- Image upload
-- Image preview
-- AI image analysis
-- Prediction result
-- Confidence score
-- Responsive UI
+**Live URL:**
+https://vercel-frontend-black-mu.vercel.app/
 
 ## Backend
 
-The backend loads the trained Vision Transformer model and performs image classification.
+The AI model/backend is deployed using **Hugging Face Spaces**.
 
-Classes:
+The frontend communicates with the deployed backend to perform image analysis.
 
-- REAL
-- FAKE
+---
 
-## Live Project
-https://vercel-frontend-black-mu.vercel.app/?utm_source=chatgpt.com
+# 🔗 Repository
 
-## Live Backend
+This repository contains the source code for the **AI vs Real Image Detector**, including the frontend and backend components.
 
-The model is deployed on Hugging Face Spaces.
+---
 
-## Live Frontend
+# 📌 Future Improvements
 
-The frontend is deployed on Vercel.
+Possible future improvements include:
 
-## Repository
+* Improve model accuracy
+* Add more AI-generated image datasets
+* Support additional image formats
+* Add image metadata analysis
+* Add explainable AI visualizations
+* Improve detection of images generated by newer AI models
+* Add batch image analysis
+* Add image history
+* Add API authentication
+* Improve robustness against compressed and edited images
 
-This repository contains the frontend and backend source code for the AI vs Real Image Detector.
+---
 
-## License
+# ⚠️ Limitations
 
-For educational and research purposes.
+AI-generated image detection is an evolving research problem.
+
+The prediction can be affected by:
+
+* Image compression
+* Resizing
+* Image editing
+* Different image generation models
+* Unseen datasets
+* Low-resolution images
+* Post-processing techniques
+
+Therefore, the detector should be considered an **AI-assisted classification tool**, not definitive proof of whether an image is real or AI-generated.
+
+---
+
+# 🎯 Purpose
+
+This project was developed for **educational and research purposes** to explore:
+
+* Computer Vision
+* Vision Transformers
+* Image Classification
+* AI-generated image detection
+* Model deployment
+* Frontend/backend integration
+* Cloud AI deployment
+
+---
+
+# 📄 License
+
+This project is provided for **educational and research purposes**.
+
+---
+
+## ⭐ If you find this project useful
+
+Consider giving the repository a ⭐ on GitHub!
